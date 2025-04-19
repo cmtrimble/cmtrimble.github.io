@@ -7,8 +7,8 @@ links:
   - title: Home
     url: /
   - title: About Me
-    url: /about
+    url: /about/
   - title: Projects
-    url: /project
+    url: /project/
   - title: Contact
-    url: /contact
+    url: /contact/
