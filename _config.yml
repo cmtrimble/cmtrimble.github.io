@@ -5,11 +5,9 @@ title: [Data Science Portfolio for Caleb Trimble]
 description: [Here you will find all of the information for me and my data science journey.]
 
 navigation:
-  - title: Home
-    url: /
   - title: About Me
-    url: /about/
+    url: /#about
   - title: Projects
-    url: /project/
+    url: /#projects
   - title: Contact
-    url: /contact/
+    url: /#contact
