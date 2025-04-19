@@ -2,20 +2,17 @@
 layout: default
 title: Caleb Trimble's Portfolio
 ---
+<section id="about">
+     <h2>About Me</h2>
+     <p>With over 16 years of experience...</p>
+</section>
 
-# Welcome to My Portfolio
-Hello, I’m Caleb Trimble, a seasoned Navy veteran turned aspiring data scientist. Below, you can explore more about me, my projects, and how to contact me.
+<section id="projects">
+     <h2>Projects</h2>
+     <p>Project #1: Placeholder description.</p>
+</section>
 
-## About Me
-With over 16 years of experience as an active-duty Navy Sailor...  
-[Learn more](about/)
-
-## Projects
-- **Project #1**: Description of the first project.  
-- **Project #2**: Description of the second project...  
-[See all projects](project/)
-
-## Contact
-- Email: cmtrimble@my365.bellevue.edu  
-- Phone: xxx-xxx-8221  
-[Get in touch](contact/)
+<section id="contact">
+     <h2>Contact</h2>
+     <p>Email: cmtrimble@my365.bellevue.edu</p>
+</section>
