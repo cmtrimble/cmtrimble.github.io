@@ -8,8 +8,7 @@ description: [Here you will find all of the information for me and my data scien
 links:
   - title: Home
     url: /
-  - title: About Me
-    url: /about/
+  - title: [About Me] (/about.html)
   - title: Projects
     url: /project/
   - title: Contact
