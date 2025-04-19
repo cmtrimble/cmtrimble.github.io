@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: Modernist
 title: About Me
 permalink: /about/
 ---
