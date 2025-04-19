@@ -4,10 +4,12 @@ plugins:
 title: [Data Science Portfolio for Caleb Trimble]
 description: [Here you will find all of the information for me and my data science journey.]
 
-# Add navigation links
-links:
+navigation:
   - title: Home
     url: /
-  - title: [About Me]
-  - title: [Projects]
-  - title: [Contact Me]
+  - title: About Me
+    url: /about/
+  - title: Projects
+    url: /project/
+  - title: Contact
+    url: /contact/
