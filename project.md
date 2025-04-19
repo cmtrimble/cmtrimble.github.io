@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: Modernist
 title: My Projects
 permalink: /project/
 ---
