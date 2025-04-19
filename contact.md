@@ -1,6 +1,7 @@
 ---
 layout: default
 title: Contact Me
+permalink: /contact/
 ---
 # E-mail Address
 cmtrimble@my365.bellevue.edu
