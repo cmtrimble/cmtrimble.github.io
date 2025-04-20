@@ -8,6 +8,6 @@ navigation:
   - title: About Me
     url: /#about
   - title: Projects
-    url: /#projects
+    url: /#project
   - title: Contact
     url: /#contact
