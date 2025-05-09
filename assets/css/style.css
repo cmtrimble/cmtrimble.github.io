@@ -6,9 +6,7 @@ body {
     padding: 0;
 }
 
-header h1 {
-    color: white;
-}
+
 h1 {
     font-size: 28px;
     color: #444;
@@ -37,6 +35,10 @@ header {
     color: white;
     padding: 1rem;
     text-align: center;
+}
+
+header h1 {
+    color: white;
 }
 
 nav a {
