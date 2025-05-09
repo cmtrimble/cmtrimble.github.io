@@ -19,3 +19,7 @@ I am a 16-year Navy veteran with expertise in data analysis, reporting, and rese
 - **Business Intelligence Tools:** Tableau, Microsoft Power BI  
 - **Machine Learning:** Linear Regression, Random Forest  
 - **Key Libraries:** Matplotlib, Plotly, Numpy, Scikit-learn, Pandas  
+
+---
+
+**[Dig a little deeper with key resume details](./resume)**
