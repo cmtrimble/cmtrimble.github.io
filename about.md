@@ -3,7 +3,19 @@ layout: default
 title: About Me
 permalink: /about/
 ---
+
 # About Me
 
-Hello, I’m Caleb Trimble.  
-With over 16 years of experience as an active-duty Navy Sailor and now nearing my Bachelor’s in Data Science, I’m excited to bring my unique background and skills to new challenges...
+---
+
+## Professional Background
+I am a 16-year Navy veteran with expertise in data analysis, reporting, and research. After transitioning from the Navy, I worked as a Data Analyst in the defense sector before shifting my focus to higher education. My experience spans various technologies, including cloud computing, cybersecurity, data analytics, and technical interpretation for non-technical consumers.
+
+---
+
+## Skills & Proficiencies
+- **Programming Languages:** Python, R, M  
+- **Operating Systems:** Linux, Windows  
+- **Business Intelligence Tools:** Tableau, Microsoft Power BI  
+- **Machine Learning:** Linear Regression, Random Forest  
+- **Key Libraries:** Matplotlib, Plotly, Numpy, Scikit-learn, Pandas  
