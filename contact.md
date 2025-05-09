@@ -3,8 +3,13 @@ layout: default
 title: Contact Me
 permalink: /contact/
 ---
-# E-mail Address
-cmtrimble@my365.bellevue.edu
+# Contact Information
 
-# Phone Number
-xxx-xxx-8221
+## Social Media Links
+- [Facebook Profile](https://www.facebook.com/CalebTMoney/about/)
+- [LinkedIn Profile](www.linkedin.com/in/caleb-trimble)
+- [GitHub Profile](cmtrimble.github.io)
+
+## Personal Contact Information
+- **Email Address:** cmtrimble@my365.bellevue.edu
+- **Phone Number:** xxx-xxx-8221
