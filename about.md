@@ -22,4 +22,4 @@ I am a 16-year Navy veteran with expertise in data analysis, reporting, and rese
 
 ---
 
-**[Dig a little deeper with key resume details](./resume)**
+**[Dig a little deeper with key resume details](https://github.com/cmtrimble/cmtrimble.github.io/blob/268e2736f040c536d2c3278ee0be097655d84977/resume.md)**
