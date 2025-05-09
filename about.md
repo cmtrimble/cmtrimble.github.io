@@ -14,11 +14,26 @@ I am a 16-year Navy veteran with expertise in data analysis, reporting, and rese
 ---
 
 ## Skills & Proficiencies
-- **Programming Languages:** Python, R, M  
-- **Operating Systems:** Linux, Windows  
-- **Business Intelligence Tools:** Tableau, Microsoft Power BI  
-- **Machine Learning:** Linear Regression, Random Forest  
-- **Key Libraries:** Matplotlib, Plotly, Numpy, Scikit-learn, Pandas  
+
+<div class="skills-container">
+    <div class="skills-column">
+        <ul>
+            <li><strong>Programming Languages:</strong> Python, R, M</li>
+            <li><strong>Operating Systems:</strong> Linux, Windows</li>
+        </ul>
+    </div>
+    <div class="skills-column">
+        <ul>
+            <li><strong>Business Intelligence Tools:</strong> Tableau, Power BI</li>
+            <li><strong>Machine Learning:</strong> Linear Regression, Random Forest</li>
+        </ul>
+    </div>
+    <div class="skills-column">
+        <ul>
+            <li><strong>Key Libraries:</strong> Matplotlib, Plotly, Numpy, Scikit-learn, Pandas</li>
+        </ul>
+    </div>
+</div>
 
 ---
 
