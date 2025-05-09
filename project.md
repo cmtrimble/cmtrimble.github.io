@@ -8,7 +8,7 @@ permalink: /project/
 
 ---
 
-## Project 1: [Modern Seismology and Geophysics Analysis]
+## Project 1: Modern Seismology and Geophysics Analysis
 ### Overview
 Explore patterns in earthquake occurrence, magnitude distribution, and data quality.
 
@@ -16,16 +16,14 @@ Explore patterns in earthquake occurrence, magnitude distribution, and data qual
 
 ---
 
-## Project 2: [Project Title]
-### Overview
-Brief description of the project.
+## Project 2: Coming Soon!
+
 
 [View Project 2]()
 
 ---
 
-## Project 3: [Project Title]
-### Overview
-Brief description of the project.
+## Project 3: Coming Soon!
+
 
 [View Project 3]()
