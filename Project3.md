@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Project 3
-permalink: /project2/
+permalink: /project3/
 ---
 
 # Project 3: TBD
