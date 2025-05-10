@@ -4,21 +4,29 @@ title: Project 1
 permalink: /project1/
 ---
 
-# Project 1: [Modern Seismology and Geophysics Analysis]
+# Project 1: Modern Seismology and Geophysics Analysis
 
-## Details
-Hypothesis: Earthquake clusters near tectonic boundaries correlate with higher magnitudes and shallower depths.
-Business Relevance:
-* Refine risk maps for governments and insurers.
-* Improve sensor deployment and data accuracy.
+---
 
+<div class="project-detail-section">
+    ## Details
+    **Hypothesis:** Earthquake clusters near tectonic boundaries correlate with higher magnitudes and shallower depths.
 
-## Files & Documentation
-- [Project Code](https://github.com/cmtrimble/cmtrimble.github.io/blob/791f340ce99e34dda79a75bb760ddc79a3c973f8/Project1/DSC%20450%20-%20Project%201.ipynb)
-- [Report](https://github.com/cmtrimble/cmtrimble.github.io/blob/791f340ce99e34dda79a75bb760ddc79a3c973f8/Project1/Project%201_%20Milestone%202.docx)
-- [Presentation](https://github.com/cmtrimble/cmtrimble.github.io/blob/791f340ce99e34dda79a75bb760ddc79a3c973f8/Project1/Project%201%20Presentation.pptx)
+    **Business Relevance:**
+    - Refine risk maps for governments and insurers.
+    - Improve sensor deployment and data accuracy.
+</div>
 
-## Key Insights
-- [Identify high risk zones that are close to, or directly on top of, active fault lines.]
-- [Implement early warning systems to detect P-Waves to alert us before the more powerful S-Waves arrive and cause damage.]
-- [Identify currently active tectonic regions that indicate an accumulation of energy that is being released.]
+<div class="project-detail-section">
+    ## Files & Documentation
+    - [Project Code](../project1/code.ipynb)
+    - [Report](../project1/report.pdf)
+    - [Presentation](../project1/presentation.pptx)
+</div>
+
+<div class="project-detail-section">
+    ## Key Insights
+    - Identify high-risk zones that are close to active fault lines.
+    - Implement early warning systems to detect P-Waves before S-Waves arrive.
+    - Identify currently active tectonic regions indicating energy accumulation.
+</div>
