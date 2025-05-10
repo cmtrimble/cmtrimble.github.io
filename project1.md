@@ -9,31 +9,37 @@ permalink: /project1/
 ---
 
 <div class="project-detail-section">
-    ## Overview
-    Analyzing tectonic data to improve earthquake prediction accuracy.
+    <h2>Overview</h2>
+    <p>Analyzing tectonic data to improve earthquake prediction accuracy.</p>
 </div>
 
 <div class="project-detail-section">
-    ## Hypothesis
-    Earthquake clusters near tectonic boundaries correlate with higher magnitudes and shallower depths.
+    <h2>Hypothesis</h2>
+    <p>Earthquake clusters near tectonic boundaries correlate with higher magnitudes and shallower depths.</p>
 </div>
 
 <div class="project-detail-section">
-    ## Business Relevance
-    - Refine risk maps for governments and insurers.
-    - Improve sensor deployment and data accuracy.
+    <h2>Business Relevance</h2>
+    <ul>
+        <li>Refine risk maps for governments and insurers.</li>
+        <li>Improve sensor deployment and data accuracy.</li>
+    </ul>
 </div>
 
 <div class="project-detail-section">
-    ## Files & Documentation
-    - [Project Code](../project1/code.ipynb)
-    - [Report](../project1/report.pdf)
-    - [Presentation](../project1/presentation.pptx)
+    <h2>Files & Documentation</h2>
+    <ul>
+        <li>[Project Code](../project1/code.ipynb)</li>
+        <li>[Report](../project1/report.pdf)</li>
+        <li>[Presentation](../project1/presentation.pptx)</li>
+    </ul>
 </div>
 
 <div class="project-detail-section">
-    ## Key Insights
-    - Identify high-risk zones near active fault lines.
-    - Implement early warning systems for seismic activity.
-    - Analyze energy accumulation in active tectonic regions.
+    <h2>Key Insights</h2>
+    <ul>
+        <li>Identify high-risk zones near active fault lines.</li>
+        <li>Implement early warning systems for seismic activity.</li>
+        <li>Analyze energy accumulation in active tectonic regions.</li>
+    </ul>
 </div>
