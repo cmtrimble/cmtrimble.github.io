@@ -29,9 +29,9 @@ permalink: /project1/
 <div class="project-detail-section">
     <h2>Files & Documentation</h2>
     <ul>
-        <li>[Project Code](../project1/code.ipynb)</li>
-        <li>[Report](../project1/report.pdf)</li>
-        <li>[Presentation](../project1/presentation.pptx)</li>
+        <li><a href="../project1/code.ipynb">Project Code</a></li>
+        <li><a href="../project1/report.pdf">Report</a></li>
+        <li><a href="../project1/presentation.pptx">Presentation</a></li>
     </ul>
 </div>
 
