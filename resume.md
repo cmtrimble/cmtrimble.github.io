@@ -30,7 +30,7 @@ Highly skilled and accomplished United States Navy Veteran, with a background as
 
 ## Skills & Certifications
 ### Technical Competencies
-Software: R Studio | Python | Microsoft Power BI | Tableau | Microsoft| Excel | Microsoft Power Suite | Microsoft Office 365 | Google Sheets 
+Software: R Studio | Python | Microsoft Power BI | Tableau | Microsoft| Excel | Microsoft Power Suite | Microsoft Office 365 | Google Sheets  
 Operating Systems: Microsoft Windows | Linux
 ### Skills
 Data Analytics | Data Cleaning | Data Wrangling | Probabilities | Statistics | Text Analytics | Visualizations | 
