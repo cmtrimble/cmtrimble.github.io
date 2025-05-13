@@ -22,16 +22,24 @@ from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.optimizers import Adam
 import spacy
+import sys
 import subprocess
 
-# Ensure spaCy models are installed dynamically
+# Check if spaCy is installed before downloading models
 try:
-    subprocess.run(["python", "-m", "spacy", "download", "en_core_web_md"], check=True)
-    subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"], check=True)
+    import spacy
+except ImportError:
+    subprocess.run([sys.executable, "-m", "pip", "install", "spacy"], check=True)
+
+# Download spaCy models dynamically using the right Python path
+try:
+    subprocess.run([sys.executable, "-m", "spacy", "download", "en_core_web_md"], check=True)
+    subprocess.run([sys.executable, "-m", "spacy", "download", "en_core_web_sm"], check=True)
 except Exception as e:
     print(f"Error installing spaCy models: {e}")
 
 # Load models
+import spacy
 nlp_md = spacy.load("en_core_web_md")
 nlp_sm = spacy.load("en_core_web_sm")
 
