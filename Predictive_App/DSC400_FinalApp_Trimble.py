@@ -23,10 +23,6 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.optimizers import Adam
-from pyspark.sql import SparkSession
-from pyspark.ml.feature import VectorAssembler
-from pyspark.ml.regression import LinearRegression
-import findspark
 import geopandas as gpd
 import spacy
 import subprocess
@@ -34,16 +30,6 @@ import subprocess
 # Install spaCy models dynamically
 subprocess.run(["python", "-m", "spacy", "download", "en_core_web_md"])
 subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
-
-# Initialize findspark
-findspark.init()
-
-# Increase memory allocation for Spark
-spark = SparkSession.builder \
-    .appName("PopulationGDPAnalysis") \
-    .config("spark.executor.memory", "8g") \
-    .config("spark.driver.memory", "8g") \
-    .getOrCreate()
 
 # Load the population and GDP datasets
 pop_url = "https://raw.githubusercontent.com/cmtrimble/cmtrimble.github.io/main/Predictive_App/World_Population_Data.csv"
@@ -166,12 +152,19 @@ plt.show()
 spark_df = spark.createDataFrame(df)
 
 # Assemble features (Population_2024 as a feature)
-assembler = VectorAssembler(inputCols=['Population_2024'], outputCol='features')
-spark_df = assembler.transform(spark_df)
+df_pop['Population_2024_scaled'] = StandardScaler().fit_transform(df_pop[['Population_2024']])
 
 # Linear regression model with PySpark
-lr = LinearRegression(featuresCol='features', labelCol='GDP (constant 2015 USD)')
-lr_model = lr.fit(spark_df)
+X = df_pop[['Population_2024_scaled']]
+y = df_gdp['GDP (constant 2015 USD)']
+
+X = sm.add_constant(X)  # Adds intercept term
+
+# Fit Ordinary Least Squares (OLS) model using Statsmodels
+ols_model = sm.OLS(y, X).fit()
+
+# Print Regression Results
+print(ols_model.summary())
 
 # Print model coefficients
 print(f"Coefficients: {lr_model.coefficients}")
