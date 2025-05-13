@@ -25,8 +25,14 @@ import spacy
 import subprocess
 
 # Install spaCy models dynamically
-subprocess.run(["python", "-m", "spacy", "download", "en_core_web_md"])
-subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
+try:
+    subprocess.run(["python", "-m", "spacy", "download", "en_core_web_md"], check=True)
+    subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"], check=True)
+except Exception as e:
+    print(f"Error installing spaCy models: {e}")
+
+nlp_md = spacy.load("en_core_web_md")
+nlp_sm = spacy.load("en_core_web_sm")
 
 # Load the population and GDP datasets from GitHub
 pop_url = "https://raw.githubusercontent.com/cmtrimble/cmtrimble.github.io/main/Predictive_App/World_Population_Data.csv"
