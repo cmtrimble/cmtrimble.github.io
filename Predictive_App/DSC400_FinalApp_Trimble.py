@@ -32,12 +32,6 @@ import geopandas as gpd
 # Initialize findspark
 findspark.init()
 
-# Set environment variables
-os.environ['PYSPARK_PYTHON'] = 'C:/Users/caleb/PycharmProjects/dsc360/new_env/Scripts/python.exe'
-os.environ['PYSPARK_DRIVER_PYTHON'] = 'C:/Users/caleb/PycharmProjects/dsc360/new_env/Scripts/python.exe'
-os.environ['HADOOP_HOME'] = 'D:/MediaDocs_Caleb/Documents/School/DSC400/hadoop-3.0.0'
-os.environ['SPARK_HOME'] = 'C:/Users/caleb/PycharmProjects/dsc360/new_env/Lib/site-packages/pyspark'
-
 # Increase memory allocation for Spark
 spark = SparkSession.builder \
     .appName("PopulationGDPAnalysis") \
@@ -46,11 +40,15 @@ spark = SparkSession.builder \
     .getOrCreate()
 
 # Load the population and GDP datasets
-pop_url = "https://github.com/cmtrimble/cmtrimble.github.io/blob/21edfeca263d5f657c59e4cbafcb44f3018bafe0/Predictive_App/World_Population_Data.csv"
-gdp_url = "https://github.com/cmtrimble/cmtrimble.github.io/blob/21edfeca263d5f657c59e4cbafcb44f3018bafe0/Predictive_App/gdp-worldbank-constant-usd.csv"
+pop_url = "https://raw.githubusercontent.com/cmtrimble/cmtrimble.github.io/main/Predictive_App/World_Population_Data.csv"
+gdp_url = "https://raw.githubusercontent.com/cmtrimble/cmtrimble.github.io/main/Predictive_App/gdp-worldbank-constant-usd.csv"
 
-df_pop = pd.read_csv(pop_url, encoding='latin1')
-df_gdp = pd.read_csv(gdp_url, encoding='latin1')
+
+try:
+    df_pop = pd.read_csv(pop_url, encoding='latin1')
+    df_gdp = pd.read_csv(gdp_url, encoding='latin1')
+except Exception as e:
+    st.error(f"Error loading dataset: {e}")
 
 # Clean the column names and apply country mapping
 df_pop.columns = df_pop.columns.str.strip().str.replace(' ', '_').str.replace('(', '').str.replace(')', '').str.replace('Â', '')
