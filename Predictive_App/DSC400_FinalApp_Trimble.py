@@ -24,13 +24,14 @@ from tensorflow.keras.optimizers import Adam
 import spacy
 import subprocess
 
-# Install spaCy models dynamically
+# Ensure spaCy models are installed dynamically
 try:
     subprocess.run(["python", "-m", "spacy", "download", "en_core_web_md"], check=True)
     subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"], check=True)
 except Exception as e:
     print(f"Error installing spaCy models: {e}")
 
+# Load models
 nlp_md = spacy.load("en_core_web_md")
 nlp_sm = spacy.load("en_core_web_sm")
 
