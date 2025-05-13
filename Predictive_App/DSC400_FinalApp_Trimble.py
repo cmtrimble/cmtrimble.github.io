@@ -25,24 +25,19 @@ import spacy
 import subprocess
 import sys
 
-# Ensure spaCy is installed before downloading models
+# Ensure spaCy is installed
 try:
     import spacy
 except ImportError:
     subprocess.run([sys.executable, "-m", "pip", "install", "spacy"], check=True)
 
-# Attempt to load models; install if missing
+# Check if model exists, install if missing
+model_name = "en_core_web_md"
 try:
-    nlp_md = spacy.load("en_core_web_md")
+    spacy.load(model_name)
 except OSError:
-    subprocess.run([sys.executable, "-m", "spacy", "download", "en_core_web_md"], check=True)
-    nlp_md = spacy.load("en_core_web_md")
-
-try:
-    nlp_sm = spacy.load("en_core_web_sm")
-except OSError:
-    subprocess.run([sys.executable, "-m", "spacy", "download", "en_core_web_sm"], check=True)
-    nlp_sm = spacy.load("en_core_web_sm")
+    subprocess.run([sys.executable, "-m", "spacy", "download", model_name], check=True)
+    spacy.load(model_name)
 
 # Load the population and GDP datasets from GitHub
 pop_url = "https://raw.githubusercontent.com/cmtrimble/cmtrimble.github.io/main/Predictive_App/World_Population_Data.csv"
