@@ -46,9 +46,11 @@ spark = SparkSession.builder \
     .getOrCreate()
 
 # Load the population and GDP datasets
-df_pop = pd.read_csv('C:\\Users\\caleb\\PycharmProjects\\DSC400\\Project\\World_Population_Data.csv', encoding='latin1')
-df_gdp = pd.read_csv('C:\\Users\\caleb\\PycharmProjects\\DSC400\\Project\\gdp-worldbank-constant-usd.csv',
-                     encoding='latin1')
+pop_url = "https://github.com/cmtrimble/cmtrimble.github.io/blob/21edfeca263d5f657c59e4cbafcb44f3018bafe0/Predictive_App/World_Population_Data.csv"
+gdp_url = "https://github.com/cmtrimble/cmtrimble.github.io/blob/21edfeca263d5f657c59e4cbafcb44f3018bafe0/Predictive_App/gdp-worldbank-constant-usd.csv"
+
+df_pop = pd.read_csv(pop_url, encoding='latin1')
+df_gdp = pd.read_csv(gdp_url, encoding='latin1')
 
 # Clean the column names and apply country mapping
 df_pop.columns = df_pop.columns.str.strip().str.replace(' ', '_').str.replace('(', '').str.replace(')', '').str.replace('Â', '')
