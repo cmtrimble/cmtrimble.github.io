@@ -8,5 +8,4 @@ statsmodels
 scikit-learn
 tensorflow
 spacy==3.8.2
-spacy-en_core_web_md
-spacy-en_core_web_sm
+
