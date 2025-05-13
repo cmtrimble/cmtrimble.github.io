@@ -7,4 +7,4 @@ plotly
 statsmodels
 scikit-learn
 tensorflow
-spacy
+spacy==3.8.2
