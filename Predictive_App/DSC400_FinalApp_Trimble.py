@@ -9,11 +9,9 @@ import matplotlib
 matplotlib.use('Agg')
 
 import streamlit as st
-import matplotlib
-import os
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
 import statsmodels.api as sm
@@ -23,7 +21,6 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.optimizers import Adam
-import geopandas as gpd
 import spacy
 import subprocess
 
@@ -31,10 +28,9 @@ import subprocess
 subprocess.run(["python", "-m", "spacy", "download", "en_core_web_md"])
 subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
 
-# Load the population and GDP datasets
+# Load the population and GDP datasets from GitHub
 pop_url = "https://raw.githubusercontent.com/cmtrimble/cmtrimble.github.io/main/Predictive_App/World_Population_Data.csv"
 gdp_url = "https://raw.githubusercontent.com/cmtrimble/cmtrimble.github.io/main/Predictive_App/gdp-worldbank-constant-usd.csv"
-
 
 try:
     df_pop = pd.read_csv(pop_url, encoding='latin1')
@@ -42,44 +38,45 @@ try:
 except Exception as e:
     st.error(f"Error loading dataset: {e}")
 
-# Clean the column names and apply country mapping
+# Clean column names
 df_pop.columns = df_pop.columns.str.strip().str.replace(' ', '_').str.replace('(', '').str.replace(')', '').str.replace('Â', '')
+
+# Apply country mapping
 country_mapping = {
     'United States': 'United States', 'South Korea': 'Korea, Rep.', 'North Korea': 'Korea, Dem. People’s Rep.',
     'DR Congo': 'Democratic Republic of Congo', "Côte d'Ivoire": "Cote d'Ivoire", 'Syria': 'Syrian Arab Republic',
     'Cape Verde': 'Cabo Verde', 'Timor-Leste': 'East Timor', 'Micronesia': 'Micronesia (country)',
     'Saint Kitts & Nevis': 'Saint Kitts and Nevis', 'Sint Maarten': 'Sint Maarten (Dutch part)',
-    'Saint Vincent & Grenadines': 'Saint Vincent and the Grenadines', 'Curacao': 'Curaçao', 'Czechia': 'Czech Republic (Czechia)',
-    'Sao Tome and Principe': 'Sao Tome & Principe', 'Palestine': 'State of Palestine', 'Turks and Caicos Islands': 'Turks and Caicos',
-    'Taiwan': 'Taiwan*', 'Greenland': 'Greenland*', 'Korea, Dem. People’s Rep.': 'North Korea', 'Korea, Rep.': 'South Korea',
-    'Reunion': 'Réunion', 'Saint Vincent and the Grenadines': 'St. Vincent & Grenadines', 'Cape Verde': 'Cabo Verde',
+    'Saint Vincent & Grenadines': 'Saint Vincent and the Grenadines', 'Curacao': 'Curaçao',
+    'Czechia': 'Czech Republic (Czechia)', 'Sao Tome and Principe': 'Sao Tome & Principe', 'Palestine': 'State of Palestine',
+    'Turks and Caicos Islands': 'Turks and Caicos', 'Taiwan': 'Taiwan*', 'Greenland': 'Greenland*',
+    'Korea, Dem. People’s Rep.': 'North Korea', 'Korea, Rep.': 'South Korea', 'Reunion': 'Réunion',
+    'Saint Vincent and the Grenadines': 'St. Vincent & Grenadines', 'Cape Verde': 'Cabo Verde',
     'Saint Helena, Ascension and Tristan da Cunha': 'Saint Helena', 'Venezuela': 'Venezuela, RB',
     'Democratic Republic of Congo': 'Congo, Dem. Rep.', 'Western Sahara': 'Western Sahara'
 }
 df_pop['Country'] = df_pop['Country'].replace(country_mapping)
 df_pop['Population_2024'] = pd.to_numeric(df_pop['Population_2024'].astype(str).str.replace(',', ''), errors='coerce')
 
-# Clean and standardize the GDP dataset for 2023
+# Clean and standardize GDP data for 2023
 df_gdp_2023 = df_gdp[df_gdp['Year'] == 2023].dropna(subset=['GDP (constant 2015 USD)'])
 df_gdp_2023['GDP (constant 2015 USD)'] = pd.to_numeric(df_gdp_2023['GDP (constant 2015 USD)'], errors='coerce')
 
-# Merge the population and GDP datasets
+# Merge datasets on country name
 df = pd.merge(df_pop, df_gdp_2023, left_on='Country', right_on='Entity', how='left')
 
 # Drop unnecessary columns
 columns_to_drop = ['Rank', 'Density_P/Km²', 'Land_Area_Km²', 'Migrants_net', 'Fert._Rate', 'Med._Age', 'Urban_Pop_%', 'World_Share']
 df_pop = df_pop.drop(columns=columns_to_drop, errors='ignore')
 
-df_pop = df_pop.replace([np.inf, -np.inf], np.nan)
-df_pop = df_pop.dropna()
+df_pop = df_pop.replace([np.inf, -np.inf], np.nan).dropna()
 
 scaler = StandardScaler()
 df_pop['Population_2024'] = scaler.fit_transform(df_pop[['Population_2024']])
 
-# Merge datasets on country name using a left merge
 df = pd.merge(df_pop, df_gdp_2023, left_on='Country', right_on='Entity', how='left')
 
-# Check for missing data
+# Remove missing data
 df.replace([np.inf, -np.inf], np.nan, inplace=True)
 df.dropna(subset=['Population_2024', 'GDP (constant 2015 USD)'], inplace=True)
 df = df[df['Population_2024'] != 0]
@@ -89,56 +86,41 @@ df = df[df['GDP (constant 2015 USD)'] != 0]
 min_max_scaler = MinMaxScaler()
 df[['Population_2024', 'GDP (constant 2015 USD)']] = min_max_scaler.fit_transform(df[['Population_2024', 'GDP (constant 2015 USD)']])
 
-# Prepare data for regression analysis
-X = df['Population_2024']
+# Regression Analysis
+X = df[['Population_2024']]
 y = df['GDP (constant 2015 USD)']
-X = sm.add_constant(X)  # Adds a constant term to the predictor
+X = sm.add_constant(X)
 
-# Fit the regression model
 model = sm.OLS(y, X).fit()
-
-# Print the regression results
 print(model.summary())
 
-# Prepare data for deep learning model
-X = df[['Population_2024']].values  # Features (Population)
-y = df['GDP (constant 2015 USD)'].values  # Target (GDP)
+# Neural Network Model
+X = df[['Population_2024']].values
+y = df['GDP (constant 2015 USD)'].values
 
-# Split the data into training and testing sets
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-### Model Building ###
-
-# Initialize the neural network model
 model = Sequential()
+model.add(Dense(128, input_dim=1, activation='relu'))
+model.add(Dropout(0.2))
+model.add(Dense(64, activation='relu'))
+model.add(Dropout(0.2))
+model.add(Dense(32, activation='relu'))
+model.add(Dropout(0.2))
+model.add(Dense(1))
 
-# Add layers (including dropout for regularization)
-model.add(Dense(128, input_dim=1, activation='relu'))  # First hidden layer (increased complexity)
-model.add(Dropout(0.2))  # Dropout layer for regularization
-model.add(Dense(64, activation='relu'))  # Second hidden layer
-model.add(Dropout(0.2))  # Dropout layer for regularization
-model.add(Dense(32, activation='relu'))  # Third hidden layer
-model.add(Dropout(0.2))  # Dropout layer for regularization
-model.add(Dense(1))  # Output layer
-
-# Compile the model with an adjusted learning rate
 optimizer = Adam(learning_rate=0.0001)
 model.compile(optimizer=optimizer, loss='mean_squared_error')
 
-# Set up early stopping
 early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
 
-# Train the model
 history = model.fit(X_train, y_train, epochs=100, batch_size=16, validation_data=(X_test, y_test), verbose=1, callbacks=[early_stopping])
 
-# Evaluate the model
 loss = model.evaluate(X_test, y_test)
 print(f"Model Loss: {loss}")
 
-# Make predictions
 predictions = model.predict(X_test)
 
-# Visualize the predictions vs actual values
 plt.figure(figsize=(10, 6))
 plt.scatter(y_test, predictions)
 plt.xlabel("Actual GDP (constant 2015 USD)")
@@ -146,81 +128,36 @@ plt.ylabel("Predicted GDP (constant 2015 USD)")
 plt.title("Actual vs Predicted GDP")
 plt.show()
 
-### PySpark Integration ###
-
-# Convert pandas DataFrame to Spark DataFrame
-spark_df = spark.createDataFrame(df)
-
-# Assemble features (Population_2024 as a feature)
-df_pop['Population_2024_scaled'] = StandardScaler().fit_transform(df_pop[['Population_2024']])
-
-# Linear regression model with PySpark
-X = df_pop[['Population_2024_scaled']]
-y = df_gdp['GDP (constant 2015 USD)']
-
-X = sm.add_constant(X)  # Adds intercept term
-
-# Fit Ordinary Least Squares (OLS) model using Statsmodels
-ols_model = sm.OLS(y, X).fit()
-
-# Print Regression Results
-print(ols_model.summary())
-
-# Print model coefficients
-print(f"Coefficients: {lr_model.coefficients}")
-print(f"Intercept: {lr_model.intercept}")
-
-# Stop the Spark session
-spark.stop()
-
 ### Streamlit Integration ###
 import streamlit as st
 import plotly.express as px
 import pandas as pd
-import findspark
-import os
-from pyspark.sql import SparkSession
 
-# Initialize findspark
-findspark.init()
+# Load the datasets from GitHub
+pop_url = "https://raw.githubusercontent.com/cmtrimble/cmtrimble.github.io/main/Predictive_App/World_Population_Data.csv"
+gdp_url = "https://raw.githubusercontent.com/cmtrimble/cmtrimble.github.io/main/Predictive_App/gdp-worldbank-constant-usd.csv"
 
-# Set environment variables
-os.environ['PYSPARK_PYTHON'] = 'C:/Users/caleb/PycharmProjects/dsc360/new_env/Scripts/python.exe'
-os.environ['PYSPARK_DRIVER_PYTHON'] = 'C:/Users/caleb/PycharmProjects/dsc360/new_env/Scripts/python.exe'
-os.environ['HADOOP_HOME'] = 'D:/MediaDocs_Caleb/Documents/School/DSC400/hadoop-3.0.0'
-os.environ['SPARK_HOME'] = 'C:/Users/caleb/PycharmProjects/dsc360/new_env/Lib/site-packages/pyspark'
-
-# Initialize Spark session
-spark = SparkSession.builder \
-    .appName("CountryStatisticsDashboard") \
-    .config("spark.executor.memory", "2g") \
-    .config("spark.driver.memory", "2g") \
-    .getOrCreate()
-
-# Load the datasets
+# Read CSVs into Pandas DataFrames
 try:
-    df_pop = pd.read_csv('C:\\Users\\caleb\\PycharmProjects\\DSC400\\Project\\World_Population_Data.csv', encoding='latin1')
-    df_gdp = pd.read_csv('C:\\Users\\caleb\\PycharmProjects\\DSC400\\Project\\gdp-worldbank-constant-usd.csv',
-                         encoding='latin1')
-except FileNotFoundError as e:
-    st.error(f"File not found: {e.filename}")
+    df_pop = pd.read_csv(pop_url, encoding='latin1')
+    df_gdp = pd.read_csv(gdp_url, encoding='latin1')
+except Exception as e:
+    st.error(f"Error loading dataset: {e}")
     st.stop()
 
 # Clean the column names and apply country mapping
-df_pop.columns = df_pop.columns.str.strip().str.replace(' ', '_').str.replace('(', '').str.replace(')', '').str.replace(
-    'Â', '')
+df_pop.columns = df_pop.columns.str.strip().str.replace(' ', '_').str.replace('(', '').str.replace(')', '').str.replace('Â', '')
+
 country_mapping = {
     'United States': 'United States', 'South Korea': 'Korea, Rep.', 'North Korea': 'Korea, Dem. People’s Rep.',
     'DR Congo': 'Democratic Republic of Congo', "Côte d'Ivoire": "Cote d'Ivoire", 'Syria': 'Syrian Arab Republic',
     'Cape Verde': 'Cabo Verde', 'Timor-Leste': 'East Timor', 'Micronesia': 'Micronesia (country)',
     'Saint Kitts & Nevis': 'Saint Kitts and Nevis', 'Sint Maarten': 'Sint Maarten (Dutch part)',
     'Saint Vincent & Grenadines': 'Saint Vincent and the Grenadines', 'Curacao': 'Curaçao',
-    'Czechia': 'Czech Republic (Czechia)',
-    'Sao Tome and Principe': 'Sao Tome & Principe', 'Palestine': 'State of Palestine',
-    'Turks and Caicos Islands': 'Turks and Caicos',
-    'Taiwan': 'Taiwan*', 'Greenland': 'Greenland*', 'Korea, Dem. People’s Rep.': 'North Korea',
-    'Korea, Rep.': 'South Korea',
-    'Reunion': 'Réunion', 'Saint Vincent and the Grenadines': 'St. Vincent & Grenadines', 'Cape Verde': 'Cabo Verde',
+    'Czechia': 'Czech Republic (Czechia)', 'Sao Tome and Principe': 'Sao Tome & Principe', 'Palestine': 'State of Palestine',
+    'Turks and Caicos Islands': 'Turks and Caicos', 'Taiwan': 'Taiwan*', 'Greenland': 'Greenland*',
+    'Korea, Dem. People’s Rep.': 'North Korea', 'Korea, Rep.': 'South Korea', 'Reunion': 'Réunion',
+    'Saint Vincent and the Grenadines': 'St. Vincent & Grenadines', 'Cape Verde': 'Cabo Verde',
     'Saint Helena, Ascension and Tristan da Cunha': 'Saint Helena', 'Venezuela': 'Venezuela, RB',
     'Democratic Republic of Congo': 'Congo, Dem. Rep.', 'Western Sahara': 'Western Sahara'
 }
