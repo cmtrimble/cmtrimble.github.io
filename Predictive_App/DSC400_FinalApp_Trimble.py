@@ -28,6 +28,12 @@ from pyspark.ml.feature import VectorAssembler
 from pyspark.ml.regression import LinearRegression
 import findspark
 import geopandas as gpd
+import spacy
+import subprocess
+
+# Install spaCy models dynamically
+subprocess.run(["python", "-m", "spacy", "download", "en_core_web_md"])
+subprocess.run(["python", "-m", "spacy", "download", "en_core_web_sm"])
 
 # Initialize findspark
 findspark.init()
