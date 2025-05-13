@@ -22,26 +22,27 @@ from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.optimizers import Adam
 import spacy
-import sys
 import subprocess
+import sys
 
-# Check if spaCy is installed before downloading models
+# Ensure spaCy is installed before downloading models
 try:
     import spacy
 except ImportError:
     subprocess.run([sys.executable, "-m", "pip", "install", "spacy"], check=True)
 
-# Download spaCy models dynamically using the right Python path
+# Attempt to load models; install if missing
 try:
+    nlp_md = spacy.load("en_core_web_md")
+except OSError:
     subprocess.run([sys.executable, "-m", "spacy", "download", "en_core_web_md"], check=True)
-    subprocess.run([sys.executable, "-m", "spacy", "download", "en_core_web_sm"], check=True)
-except Exception as e:
-    print(f"Error installing spaCy models: {e}")
+    nlp_md = spacy.load("en_core_web_md")
 
-# Load models
-import spacy
-nlp_md = spacy.load("en_core_web_md")
-nlp_sm = spacy.load("en_core_web_sm")
+try:
+    nlp_sm = spacy.load("en_core_web_sm")
+except OSError:
+    subprocess.run([sys.executable, "-m", "spacy", "download", "en_core_web_sm"], check=True)
+    nlp_sm = spacy.load("en_core_web_sm")
 
 # Load the population and GDP datasets from GitHub
 pop_url = "https://raw.githubusercontent.com/cmtrimble/cmtrimble.github.io/main/Predictive_App/World_Population_Data.csv"
