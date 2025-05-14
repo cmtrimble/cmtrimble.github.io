@@ -1,7 +1,7 @@
 ---
 layout: default
 title: GDP Nostradamus
-permalink: /Predictive_App/
+permalink: /predictive-app/
 ---
 
 # Predictive Application: World GDP and Population Correlation Application
