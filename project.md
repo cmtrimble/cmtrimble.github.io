@@ -8,11 +8,18 @@ permalink: /project/
 
 ---
 
+## Predictive Application: World GDP and Population Correlator
+### Overview
+Explore various elements of GDP and Population using an interactive map. Gain insight into how populations impact Gross Domestic Product!
+
+[View Application](https://github.com/cmtrimble/cmtrimble.github.io/tree/main/Predictive_App)
+---
+
 ## Project 1: Modern Seismology and Geophysics Analysis
 ### Overview
 Explore patterns in earthquake occurrence, magnitude distribution, and data quality.
 
-[View Project 1](https://github.com/cmtrimble/cmtrimble.github.io/tree/3176c02ebda754571ac9a84daceae32e53b895bd/Project1)
+[View Project 1](https://github.com/cmtrimble/cmtrimble.github.io/tree/main/Project1)
 
 ---
 
