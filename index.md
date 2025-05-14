@@ -14,14 +14,14 @@ title: Caleb Trimble's Portfolio
 <section id="projects">
     <h2>Projects</h2>
     
-    <ul>
-        <li><strong>Streamlit Application:</strong> <a href="/Predictive_App">View Details</a.</li>
-        <li><strong>Project 1:</strong> <a href="/project1/">View Details</a></li>
-        <li><strong>Project 2:</strong> <a href="/project2/">View Details</a></li>
-        <li><strong>Project 3:</strong> <a href="/project3/">View Details</a></li>
-    </ul>
-    
-    <a href="/project/">Explore All Projects</a>
+<ul>
+    <li><a href="https://gdp-nostradamus.streamlit.app/">Streamlit Application: View Details</a></li>
+    <li><a href="https://github.com/cmtrimble/cmtrimble.github.io/tree/main/Project1">Project 1: View Details</a></li>
+    <li><a href="project2-link">Project 2: View Details</a></li>
+    <li><a href="project3-link">Project 3: View Details</a></li>
+</ul>
+ 
+<p><a href="/project/">Explore All Projects</a></p>
 </section>
 
 <hr>
