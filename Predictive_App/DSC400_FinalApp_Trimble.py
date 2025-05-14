@@ -262,9 +262,16 @@ fig_population = px.scatter(df_pop, x="Country", y="Population_2024",
                             title='Population of Countries in 2024')
 st.plotly_chart(fig_population)
 
-# Display Cached Model Predictions
-st.write("### Model Predictions (GDP)")
-st.write(predictions)
+print("Raw Predictions:", predictions)
+print(predictions.shape)
+print(f"X_test shape: {X_test.shape}")
+
+# Model Predictions
+if predictions.size > 0:
+    st.write("Model Predictions (GDP):")
+    st.write(predictions)
+else:
+    st.write("⚠ No predictions were generated. Check model training.")
 
 # Checkbox for raw data
 if st.checkbox('See Raw Data'):
