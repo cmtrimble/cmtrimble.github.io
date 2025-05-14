@@ -216,8 +216,20 @@ def train_model():
 
     early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
 
-    model.fit(X_train, y_train, epochs=50, batch_size=32, validation_data=(X_test, y_test), verbose=1, callbacks=[early_stopping])
+    # **Streamlit Training Status UI**
+    epochs = 50
+    progress_bar = st.progress(0)  # Loading bar
+    status_text = st.empty()  # Placeholder for real-time epoch updates
 
+    # **Run Epochs with Real-Time Updates**
+    for epoch in range(epochs):
+        history = model.fit(X_train, y_train, epochs=1, batch_size=32, validation_data=(X_test, y_test), verbose=0, callbacks=[early_stopping])
+
+        # **Update Streamlit UI**
+        progress_bar.progress((epoch + 1) / epochs)  # Update progress bar
+        status_text.text(f"Training... Epoch {epoch + 1} / {epochs}")  # Show epoch progress
+
+    # **Generate Predictions After Training Completes**
     predictions = model.predict(X_test)
     return predictions
 
