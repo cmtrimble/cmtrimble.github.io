@@ -22,11 +22,10 @@ from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.optimizers import Adam
 import spacy
-import subprocess
-import sys
 
-subprocess.run([sys.executable, "-m", "spacy", "download", "en_core_web_md"], check=True)
-subprocess.run([sys.executable, "-m", "spacy", "download", "en_core_web_sm"], check=True)
+# **Remove dynamic downloads & load models from your local repository**
+nlp_md = spacy.load("Predictive_App/en_core_web_models/en_core_web_md")
+nlp_sm = spacy.load("Predictive_App/en_core_web_models/en_core_web_sm")
 
 # Load the population and GDP datasets from GitHub
 pop_url = "https://raw.githubusercontent.com/cmtrimble/cmtrimble.github.io/main/Predictive_App/World_Population_Data.csv"
