@@ -14,7 +14,7 @@ title: Caleb Trimble's Portfolio
 <section id="projects">
     <h2>Projects</h2>
     <ul>
-        <li><a href="/Predictive_App/">Streamlit Application: View Details</a></li>
+        <li><a href="/Predictive_App_OV/">Streamlit Application: View Details</a></li>
         <li><a href="/project1/">Project 1: View Details</a></li>
         <li><a href="/project2/">Project 2: View Details</a></li>
         <li><a href="/project3/">Project 3: View Details</a></li>
