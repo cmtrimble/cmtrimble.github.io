@@ -26,8 +26,8 @@ permalink: /Predictive_App/
 <div class="project-detail-section">
     <h2>Files & Documentation</h2>
     <ul>
-        <li><a href="[Project Code](../Predictive_App/DSC400_FinalApp_Trimble.py)">Project Code</a></li>
-        <li><a href="[Presentation](../Predictive_App/World%20GDP%20and%20Population%20Correlation%20Application.pptx)">Presentation</a></li>
+        <li><a href="[Project Code](https://github.com/cmtrimble/cmtrimble.github.io/blob/main/Predictive_App/DSC400_FinalApp_Trimble.py)">Project Code</a></li>
+        <li><a href="[Presentation](https://github.com/cmtrimble/cmtrimble.github.io/blob/main/Predictive_App/World%20GDP%20and%20Population%20Correlation%20Application.pptx)">Presentation</a></li>
         <li><a href="[Application](https://gdp-nostradamus.streamlit.app/)">Application</a></li>
     </ul>
 </div>
