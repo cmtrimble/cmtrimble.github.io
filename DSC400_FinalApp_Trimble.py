@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # GDP source: World Bank and OECD (2025) – with minor processing by Our World in Data.
 # “Gross domestic product (GDP) – World Bank – In constant US$” [dataset]. World Bank and OECD,
 # “World Development Indicators” [original data].
@@ -340,3 +341,4 @@ st.markdown("""
 """)
 
 
+=======

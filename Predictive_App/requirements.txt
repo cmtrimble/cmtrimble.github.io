@@ -1,0 +1,11 @@
+streamlit
+pandas
+numpy
+matplotlib
+seaborn
+plotly
+statsmodels
+scikit-learn
+tensorflow
+spacy==3.8.2
+

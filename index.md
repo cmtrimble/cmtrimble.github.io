@@ -1,0 +1,32 @@
+---
+layout: default
+title: Caleb Trimble's Portfolio
+---
+
+<section id="about">
+    <h2>About Me</h2>
+    <p>16-year Navy veteran with expertise in data analysis, reporting, and research.</p>
+    <a href="/about/">Learn More</a>
+</section>
+
+<hr>
+
+<section id="projects">
+    <h2>Projects</h2>
+    
+    <ul>
+        <li><strong>Project 1:</strong> <a href="/project1/">View Details</a></li>
+        <li><strong>Project 2:</strong> <a href="/project2/">View Details</a></li>
+        <li><strong>Project 3:</strong> <a href="/project3/">View Details</a></li>
+    </ul>
+    
+    <a href="/project/">Explore All Projects</a>
+</section>
+
+<hr>
+
+<section id="contact">
+    <h2>Contact</h2>
+    <p>Email: cmtrimble@my365.bellevue.edu</p>
+    <a href="/contact/">Get in Touch</a>
+</section>

@@ -1,0 +1,13 @@
+remote_theme: pages-themes/modernist@v0.2.0
+plugins:
+- jekyll-remote-theme # add this line to the plugins list if you already have one
+title: [Data Science Portfolio for Caleb Trimble]
+description: [Here you will find all of the information for me and my data science journey.]
+
+navigation:
+  - title: About Me
+    url: /#about
+  - title: Projects
+    url: /#project
+  - title: Contact
+    url: /#contact
