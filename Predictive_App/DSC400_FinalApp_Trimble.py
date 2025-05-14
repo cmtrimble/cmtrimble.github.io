@@ -24,8 +24,8 @@ from tensorflow.keras.optimizers import Adam
 import spacy
 
 # **Remove dynamic downloads & load models from your local repository**
-nlp_md = spacy.load("/mount/src/cmtrimble.github.io/Predictive_App/en_core_web_models/en_core_web_md")
-nlp_sm = spacy.load("/mount/src/cmtrimble.github.io/Predictive_App/en_core_web_models/en_core_web_sm")
+nlp_md = spacy.load("Predictive_App/en_core_web_models/en_core_web_md/en_core_web_md-3.8.0")
+nlp_sm = spacy.load("Predictive_App/en_core_web_models/en_core_web_sm/en_core_web_sm-3.8.0")
 
 # Load the population and GDP datasets from GitHub
 pop_url = "https://raw.githubusercontent.com/cmtrimble/cmtrimble.github.io/main/Predictive_App/World_Population_Data.csv"
