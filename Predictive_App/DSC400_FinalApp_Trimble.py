@@ -143,19 +143,17 @@ plt.ylabel("Predicted GDP (constant 2015 USD)")
 plt.title("Actual vs Predicted GDP")
 plt.show()
 
-### Streamlit Integration ###
 import streamlit as st
-import plotly.express as px
 import pandas as pd
-import statsmodels.api as sm
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
+import plotly.express as px
 from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.optimizers import Adam
 
-### 🚀 Caching Functions ###
+### 🔹 Caching Functions ###
 @st.cache_data
 def load_population_data():
     pop_url = "https://raw.githubusercontent.com/cmtrimble/cmtrimble.github.io/main/Predictive_App/World_Population_Data.csv"
@@ -170,30 +168,20 @@ def load_gdp_data():
 df_pop = load_population_data()
 df_gdp = load_gdp_data()
 
-### 🚀 Data Preprocessing ###
-df_pop.columns = df_pop.columns.str.strip().str.replace(' ', '_').str.replace('(', '').str.replace(')', '').str.replace('Â', '')
-
-# Apply country mapping
-country_mapping = {
-    'United States': 'United States', 'South Korea': 'Korea, Rep.', 'North Korea': 'Korea, Dem. People’s Rep.',
-    'DR Congo': 'Democratic Republic of Congo', "Côte d'Ivoire": "Cote d'Ivoire", 'Syria': 'Syrian Arab Republic',
-    'Cape Verde': 'Cabo Verde', 'Timor-Leste': 'East Timor', 'Micronesia': 'Micronesia (country)',
-    'Saint Kitts & Nevis': 'Saint Kitts and Nevis', 'Sint Maarten': 'Sint Maarten (Dutch part)',
-    'Saint Vincent & Grenadines': 'Saint Vincent and the Grenadines', 'Curacao': 'Curaçao',
-    'Czechia': 'Czech Republic (Czechia)', 'Sao Tome and Principe': 'Sao Tome & Principe', 'Palestine': 'State of Palestine',
-    'Turks and Caicos Islands': 'Turks and Caicos', 'Taiwan': 'Taiwan*', 'Greenland': 'Greenland*',
-    'Korea, Dem. People’s Rep.': 'North Korea', 'Korea, Rep.': 'South Korea', 'Reunion': 'Réunion',
-    'Saint Vincent and the Grenadines': 'St. Vincent & Grenadines', 'Cape Verde': 'Cabo Verde',
-    'Saint Helena, Ascension and Tristan da Cunha': 'Saint Helena', 'Venezuela': 'Venezuela, RB',
-    'Democratic Republic of Congo': 'Congo, Dem. Rep.', 'Western Sahara': 'Western Sahara'
-}
-df_pop['Country'] = df_pop['Country'].replace(country_mapping)
-df_pop['Population_2024'] = pd.to_numeric(df_pop['Population_2024'].astype(str).str.replace(',', ''), errors='coerce')
-
-# Merge datasets
+### 🔹 Data Preprocessing ###
 df_combined = pd.merge(df_pop, df_gdp, left_on='Country', right_on='Entity', how='left')
 
-### 🚀 ML Model Training with Caching ###
+# Handle missing & infinite values
+df_combined.replace([float("inf"), -float("inf")], pd.NA, inplace=True)
+df_combined.dropna(subset=['Population_2024', 'GDP (constant 2015 USD)'], inplace=True)
+
+# Normalize data
+scaler = MinMaxScaler()
+df_combined[['Population_2024', 'GDP (constant 2015 USD)']] = scaler.fit_transform(df_combined[['Population_2024', 'GDP (constant 2015 USD)']])
+
+### 🔹 ML Model Training with Cache Clearing ###
+st.cache_data.clear()  # **Ensure retraining before running new predictions**
+
 @st.cache_data
 def train_model():
     X = df_combined[['Population_2024']].values
@@ -216,42 +204,43 @@ def train_model():
 
     early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
 
-    # **Streamlit Training Status UI**
-    epochs = 50
-    progress_bar = st.progress(0)  # Loading bar
-    status_text = st.empty()  # Placeholder for real-time epoch updates
+    history = model.fit(X_train, y_train, epochs=50, batch_size=32, validation_data=(X_test, y_test), verbose=0, callbacks=[early_stopping])
 
-    # **Run Epochs with Real-Time Updates**
-    for epoch in range(epochs):
-        history = model.fit(X_train, y_train, epochs=1, batch_size=32, validation_data=(X_test, y_test), verbose=0, callbacks=[early_stopping])
-
-        # **Update Streamlit UI**
-        progress_bar.progress((epoch + 1) / epochs)  # Update progress bar
-        status_text.text(f"Training... Epoch {epoch + 1} / {epochs}")  # Show epoch progress
-
-    # **Generate Predictions After Training Completes**
     predictions = model.predict(X_test)
+    
+    # **Save Predictions in Session State**
+    st.session_state["predictions"] = predictions
     return predictions
 
-# Cached predictions
+# Retrieve predictions
 predictions = train_model()
 
-### 🚀 Streamlit Integration ###
+### 🔹 Streamlit UI ###
 st.title("Country Statistics Dashboard")
 
-# Sidebar for user inputs
-st.sidebar.title("GDP Year Selection")
-selected_year = st.sidebar.selectbox("Select Year", df_gdp['Year'].unique())
+# Debugging Prints
+st.write("### Debugging Information")
+st.write(f"X_test shape: {df_combined[['Population_2024']].values.shape}")
+st.write("Sample X_test values:")
+st.write(df_combined[['Population_2024']].head())  # Show first few values
 
-# Filter data based on user selection
+st.write(f"Raw Predictions: {predictions[:5] if predictions is not None else 'No predictions generated'}")
+
+# Model Predictions Display
+if predictions is not None and len(predictions) > 0:
+    st.write("### Model Predictions (GDP)")
+    st.write(predictions)
+else:
+    st.write("⚠ No predictions were generated. Check model training.")
+
+# Interactive Map
+selected_year = st.sidebar.selectbox("Select Year", df_gdp['Year'].unique())
 filtered_gdp_data = df_combined[df_combined['Year'] == selected_year]
 
-# Interactive map
-st.write("### Interactive Map")
 fig_map = px.choropleth(filtered_gdp_data, locations="Country", locationmode='country names',
                         color="GDP (constant 2015 USD)",
                         hover_name="Country",
-                        hover_data={"GDP (constant 2015 USD)": True, "Population_2024": True, "Rank": True},
+                        hover_data={"GDP (constant 2015 USD)": True, "Population_2024": True},
                         projection="natural earth",
                         title=f'World GDP in {selected_year}')
 st.plotly_chart(fig_map)
