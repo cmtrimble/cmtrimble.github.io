@@ -222,10 +222,11 @@ from tensorflow.keras.optimizers import Adam
 import spacy
 import subprocess
 
+# Ensure SpaCy model installation
 try:
     nlp_md = spacy.load("en_core_web_md")
 except OSError:
-    print("Model not found, installing now...")
+    print("🔧 Model not found, installing now...")
     subprocess.run(["python", "-m", "spacy", "download", "en_core_web_md"], check=True)
     nlp_md = spacy.load("en_core_web_md")
     print("Model installed successfully!")
