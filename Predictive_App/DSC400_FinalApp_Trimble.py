@@ -21,7 +21,6 @@ try:
     nlp_md = spacy.load("en_core_web_md")
 except OSError:
     print("🔧 en_core_web_md not found, installing now...")
-    subprocess.run(["python", "-m", "spacy", "download", "en_core_web_md"], check=True)
     print("Installation successful!")
     nlp_md = spacy.load("en_core_web_md")
 
