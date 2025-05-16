@@ -173,7 +173,7 @@ if st.sidebar.button("Generate Predictions"):
         st.write("Predictions Generated!")
 
 # **Visualizations**
-if st.sidebar.button("Generate Predictions", key="generate_predictions"):
+if st.sidebar.button("Generate Visualizations", key="generate_visualizations"):
     if "trained_model" not in st.session_state or "X_test" not in st.session_state or "y_test" not in st.session_state:
         st.error("🚨 Error: Train the model first before generating predictions!")
     else:
@@ -193,6 +193,20 @@ if st.sidebar.button("Generate Predictions", key="generate_predictions"):
         ax1.set_title("Actual vs. Predicted GDP")
 
         st.pyplot(fig)
+
+st.sidebar.title("GDP Year Selection")
+
+# Ensure GDP data is loaded before filtering
+if "df_gdp" in st.session_state:
+    selected_year = st.sidebar.selectbox("Select Year", st.session_state["df_gdp"]["Year"].unique())
+
+    # Filter data for the selected year
+    filtered_gdp_data = st.session_state["df_combined"][st.session_state["df_combined"]["Year"] == selected_year]
+
+    # Store selection in session state
+    st.session_state["selected_year"] = selected_year
+else:
+    st.sidebar.warning("⚠ Load data first to enable year selection.")
 
 
 # Streamlit Integration
@@ -248,7 +262,7 @@ def load_gdp_data():
 df_pop = load_population_data()
 df_gdp = load_gdp_data()
 
-### 🚀 **Data Preprocessing Fixes** ###
+### **Data Preprocessing Fixes** ###
 df_gdp_latest = df_gdp[df_gdp['Year'] == df_gdp['Year'].max()].dropna(subset=['GDP (constant 2015 USD)'])
 df_gdp_latest['GDP (constant 2015 USD)'] = pd.to_numeric(df_gdp_latest['GDP (constant 2015 USD)'], errors='coerce')
 
@@ -259,7 +273,36 @@ df_combined.dropna(subset=['Population_historical', 'Pop_Growth', 'GDP (constant
 scaler = MinMaxScaler()
 df_combined[['Population_historical', 'Pop_Growth', 'GDP (constant 2015 USD)']] = scaler.fit_transform(df_combined[['Population_historical', 'Pop_Growth', 'GDP (constant 2015 USD)']])
 
-### 🚀 **Fix: ML Model Training with Arguments**
+### **Streamlit Sidebar (Year Selection)** ###
+st.sidebar.title("GDP Year Selection")
+
+# Ensure GDP data is loaded before filtering
+if "df_gdp" in st.session_state:
+    selected_year = st.sidebar.selectbox("Select Year", df_gdp["Year"].unique())
+
+    # Filter data for the selected year
+    filtered_gdp_data = df_combined[df_combined["Year"] == selected_year]
+
+    # Store selection in session state
+    st.session_state["selected_year"] = selected_year
+else:
+    st.sidebar.warning("Load data first to enable year selection.")
+
+### 🚀 **Interactive Map Visualization** ###
+if "selected_year" in st.session_state:
+    st.write(f"### Interactive Map for {st.session_state['selected_year']}")
+
+    fig_map = px.choropleth(filtered_gdp_data, locations="Entity", locationmode='country names',
+                            color="GDP (constant 2015 USD)",
+                            hover_name="Entity",
+                            hover_data={"GDP (constant 2015 USD)": True, "Population_historical": True, "Pop_Growth": True},
+                            projection="natural earth",
+                            title=f'World GDP in {st.session_state["selected_year"]}')
+    st.plotly_chart(fig_map)
+else:
+    st.warning("Select a year to visualize GDP data.")
+
+### **Fix: ML Model Training with Arguments** ###
 @st.cache_data
 def train_model(X_train, y_train, X_test, y_test):
     model = Sequential([
@@ -281,18 +324,18 @@ def train_model(X_train, y_train, X_test, y_test):
 
     return model
 
-# ✅ **Ensure `X_train, X_test` is created before training**
+# **Ensure `X_train, X_test` is created before training**
 X = df_combined[['Population_historical', 'Pop_Growth']].values
 y = df_combined['GDP (constant 2015 USD)'].values
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# ✅ **Train the model with correct parameters**
+# **Train the model with correct parameters**
 trained_model = train_model(X_train, y_train, X_test, y_test)
 
-# ✅ **Generate predictions safely**
+# **Generate predictions safely**
 predictions = trained_model.predict(X_test).flatten().tolist()
 
-print("Raw Predictions:", predictions[:10])  # ✅ Debugging output
+print("Raw Predictions:", predictions[:10])  # Debugging output
 
 # **Model Predictions**
 if predictions and len(predictions) > 0:
