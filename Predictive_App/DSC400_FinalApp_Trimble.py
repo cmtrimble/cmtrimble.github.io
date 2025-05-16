@@ -220,34 +220,15 @@ from tensorflow.keras.layers import Dense, Dropout
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.optimizers import Adam
 import spacy
-import os
 import subprocess
 
-# ✅ GitHub model URLs
-MODEL_URL_MD = "https://github.com/cmtrimble/cmtrimble.github.io/raw/main/Predictive_App/en_core_web_models/en_core_web_md/en_core_web_md-3.8.0/en_core_web_md.tar.gz"
-MODEL_URL_SM = "https://github.com/cmtrimble/cmtrimble.github.io/raw/main/Predictive_App/en_core_web_models/en_core_web_sm/en_core_web_sm-3.8.0/en_core_web_sm.tar.gz"
-
-MODEL_PATH_MD = "en_core_web_md"
-MODEL_PATH_SM = "en_core_web_sm"
-
-# ✅ Check if models exist locally; if not, download them from GitHub
-if not os.path.exists(MODEL_PATH_MD):
-    subprocess.run(["wget", MODEL_URL_MD, "-O", "en_core_web_md.tar.gz"])
-    subprocess.run(["tar", "-xzf", "en_core_web_md.tar.gz"])
-    print("✅ en_core_web_md model downloaded and extracted!")
-
-if not os.path.exists(MODEL_PATH_SM):
-    subprocess.run(["wget", MODEL_URL_SM, "-O", "en_core_web_sm.tar.gz"])
-    subprocess.run(["tar", "-xzf", "en_core_web_sm.tar.gz"])
-    print("✅ en_core_web_sm model downloaded and extracted!")
-
-# ✅ Load the models
-nlp_md = spacy.load(MODEL_PATH_MD)
-nlp_sm = spacy.load(MODEL_PATH_SM)
-
-# Now load the models
-nlp_md = spacy.load("en_core_web_md")
-nlp_sm = spacy.load("en_core_web_sm")
+try:
+    nlp_md = spacy.load("en_core_web_md")
+except OSError:
+    print("Model not found, installing now...")
+    subprocess.run(["python", "-m", "spacy", "download", "en_core_web_md"], check=True)
+    nlp_md = spacy.load("en_core_web_md")
+    print("Model installed successfully!")
 
 ### 🚀 Caching Functions ###
 
