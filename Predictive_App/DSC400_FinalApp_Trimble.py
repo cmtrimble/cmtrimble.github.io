@@ -13,31 +13,19 @@ from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.optimizers import Adam
 import matplotlib.pyplot as plt
 import urllib.request
-import subprocess
 import spacy
+import subprocess
 
+# Install the model if missing
+try:
+    nlp_md = spacy.load("en_core_web_md")
+except OSError:
+    print("🔧 en_core_web_md not found, installing now...")
+    subprocess.run(["python", "-m", "spacy", "download", "en_core_web_md"], check=True)
+    print("Installation successful!")
+    nlp_md = spacy.load("en_core_web_md")
 
-# Install SpaCy models if missing
-def ensure_spacy_models():
-    models = ["en_core_web_md", "en_core_web_sm"]
-
-    for model in models:
-        try:
-            spacy.load(model)  # Check if model is installed
-        except OSError:
-            print(f"🔧 {model} not found. Installing now...")
-            subprocess.run(["python", "-m", "spacy", "download", model])  # Install dynamically
-            print(f" {model} installed successfully!")
-
-
-# Run model installation check before loading models
-ensure_spacy_models()
-
-# Now load the SpaCy models
-nlp_md = spacy.load("en_core_web_md")
-nlp_sm = spacy.load("en_core_web_sm")
-
-### 🚀 Load Population & GDP Datasets ###
+### Load Population & GDP Datasets ###
 @st.cache_data
 def load_data():
     pop_url = "https://raw.githubusercontent.com/cmtrimble/cmtrimble.github.io/main/Predictive_App/population.csv"
@@ -52,7 +40,7 @@ def load_data():
 
     return df_pop, df_gdp
 
-### 🚀 Data Cleaning & Preprocessing ###
+### Data Cleaning & Preprocessing ###
 def preprocess_data(df_pop, df_gdp):
     df_pop.columns = df_pop.columns.str.strip().str.replace(' ', '_').str.replace('(', '').str.replace(')', '').str.replace('Â', '')
 
@@ -84,7 +72,7 @@ def preprocess_data(df_pop, df_gdp):
 
     return df_combined
 
-### 🚀 Regression Analysis ###
+### Regression Analysis ###
 def run_regression(df_combined):
     X = df_combined[['Population_historical', 'Pop_Growth']]
     y = df_combined['GDP (constant 2015 USD)']
@@ -99,7 +87,7 @@ def run_regression(df_combined):
 @st.cache_data
 def train_model(X_train, y_train, X_test, y_test):
     model = Sequential([
-        Input(shape=(2,)),  # ✅ Fixes TensorFlow `input_dim` warning
+        Input(shape=(2,)),  # Fixes TensorFlow `input_dim` warning
         Dense(128, activation='relu'),
         Dropout(0.2),
         Dense(64, activation='relu'),
