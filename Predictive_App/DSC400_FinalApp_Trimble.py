@@ -1,196 +1,106 @@
-# GDP source: World Bank and OECD (2025) – with minor processing by Our World in Data.
-# “Gross domestic product (GDP) – World Bank – In constant US$” [dataset]. World Bank and OECD,
-# “World Development Indicators” [original data].
-
-# Population Source: Samithsachidanandan. (2025, February 6). Countries in the world by population (2025). Kaggle.
-# https://www.kaggle.com/code/samithsachidanandan/countries-in-the-world-by-population-2025
-
 import matplotlib
 matplotlib.use('Agg')
 
 import streamlit as st
-import matplotlib.pyplot as plt
-import numpy as np
 import pandas as pd
-import seaborn as sns
-import plotly.express as px
+import numpy as np
 import statsmodels.api as sm
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout
+from tensorflow.keras.layers import Dense, Dropout, Input
 from tensorflow.keras.callbacks import EarlyStopping
 from tensorflow.keras.optimizers import Adam
+import matplotlib.pyplot as plt
+import urllib.request
+import subprocess
 import spacy
 
-# **Remove dynamic downloads & load models from your local repository**
-nlp_md = spacy.load("Predictive_App/en_core_web_models/en_core_web_md/en_core_web_md-3.8.0")
-nlp_sm = spacy.load("Predictive_App/en_core_web_models/en_core_web_sm/en_core_web_sm-3.8.0")
 
-# Load the population and GDP datasets from GitHub
-pop_url = "https://raw.githubusercontent.com/cmtrimble/cmtrimble.github.io/main/Predictive_App/World_Population_Data.csv"
-gdp_url = "https://raw.githubusercontent.com/cmtrimble/cmtrimble.github.io/main/Predictive_App/gdp-worldbank-constant-usd.csv"
+# Install SpaCy models if missing
+def ensure_spacy_models():
+    models = ["en_core_web_md", "en_core_web_sm"]
 
-try:
-    df_pop = pd.read_csv(pop_url, encoding='latin1')
-    df_gdp = pd.read_csv(gdp_url, encoding='latin1')
-except Exception as e:
-    st.error(f"Error loading dataset: {e}")
+    for model in models:
+        try:
+            spacy.load(model)  # Check if model is installed
+        except OSError:
+            print(f"🔧 {model} not found. Installing now...")
+            subprocess.run(["python", "-m", "spacy", "download", model])  # Install dynamically
+            print(f" {model} installed successfully!")
 
-# Clean column names
-df_pop.columns = df_pop.columns.str.strip().str.replace(' ', '_').str.replace('(', '').str.replace(')', '').str.replace('Â', '')
 
-# Apply country mapping
-country_mapping = {
-    'United States': 'United States', 'South Korea': 'Korea, Rep.', 'North Korea': 'Korea, Dem. People’s Rep.',
-    'DR Congo': 'Democratic Republic of Congo', "Côte d'Ivoire": "Cote d'Ivoire", 'Syria': 'Syrian Arab Republic',
-    'Cape Verde': 'Cabo Verde', 'Timor-Leste': 'East Timor', 'Micronesia': 'Micronesia (country)',
-    'Saint Kitts & Nevis': 'Saint Kitts and Nevis', 'Sint Maarten': 'Sint Maarten (Dutch part)',
-    'Saint Vincent & Grenadines': 'Saint Vincent and the Grenadines', 'Curacao': 'Curaçao',
-    'Czechia': 'Czech Republic (Czechia)', 'Sao Tome and Principe': 'Sao Tome & Principe', 'Palestine': 'State of Palestine',
-    'Turks and Caicos Islands': 'Turks and Caicos', 'Taiwan': 'Taiwan*', 'Greenland': 'Greenland*',
-    'Korea, Dem. People’s Rep.': 'North Korea', 'Korea, Rep.': 'South Korea', 'Reunion': 'Réunion',
-    'Saint Vincent and the Grenadines': 'St. Vincent & Grenadines', 'Cape Verde': 'Cabo Verde',
-    'Saint Helena, Ascension and Tristan da Cunha': 'Saint Helena', 'Venezuela': 'Venezuela, RB',
-    'Democratic Republic of Congo': 'Congo, Dem. Rep.', 'Western Sahara': 'Western Sahara'
-}
-df_pop['Country'] = df_pop['Country'].replace(country_mapping)
-df_pop['Population_2024'] = pd.to_numeric(df_pop['Population_2024'].astype(str).str.replace(',', ''), errors='coerce')
+# Run model installation check before loading models
+ensure_spacy_models()
 
-# Clean and standardize GDP data for 2023
-df_gdp_2023 = df_gdp[df_gdp['Year'] == 2023].dropna(subset=['GDP (constant 2015 USD)'])
-df_gdp_2023['GDP (constant 2015 USD)'] = pd.to_numeric(df_gdp_2023['GDP (constant 2015 USD)'], errors='coerce')
+# Now load the SpaCy models
+nlp_md = spacy.load("en_core_web_md")
+nlp_sm = spacy.load("en_core_web_sm")
 
-# Merge datasets on country name
-df = pd.merge(df_pop, df_gdp_2023, left_on='Country', right_on='Entity', how='left')
-
-# Drop unnecessary columns
-columns_to_drop = ['Rank', 'Density_P/Km²', 'Land_Area_Km²', 'Migrants_net', 'Fert._Rate', 'Med._Age', 'Urban_Pop_%', 'World_Share']
-df_pop = df_pop.drop(columns=columns_to_drop, errors='ignore')
-
-df_pop = df_pop.replace([np.inf, -np.inf], np.nan).dropna()
-
-scaler = StandardScaler()
-df_pop['Population_2024'] = scaler.fit_transform(df_pop[['Population_2024']])
-
-df = pd.merge(df_pop, df_gdp_2023, left_on='Country', right_on='Entity', how='left')
-
-# Remove missing data
-df.replace([np.inf, -np.inf], np.nan, inplace=True)
-df.dropna(subset=['Population_2024', 'GDP (constant 2015 USD)'], inplace=True)
-df = df[df['Population_2024'] != 0]
-df = df[df['GDP (constant 2015 USD)'] != 0]
-
-# Normalize the data
-min_max_scaler = MinMaxScaler()
-df[['Population_2024', 'GDP (constant 2015 USD)']] = min_max_scaler.fit_transform(df[['Population_2024', 'GDP (constant 2015 USD)']])
-
-### ML Processing ###
-# Regression Analysis
-X = df[['Population_2024']]
-y = df['GDP (constant 2015 USD)']
-X = sm.add_constant(X)
-
-model = sm.OLS(y, X).fit()
-print(model.summary())
-
-# Neural Network Model (Training)
-X = df[['Population_2024']].values
-y = df['GDP (constant 2015 USD)'].values
-
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-@st.cache_data  # Cache ML training to avoid reprocessing on refresh
-def train_model():
-    model = Sequential()
-    model.add(Dense(128, input_dim=1, activation='relu'))
-    model.add(Dropout(0.2))
-    model.add(Dense(64, activation='relu'))
-    model.add(Dropout(0.2))
-    model.add(Dense(32, activation='relu'))
-    model.add(Dropout(0.2))
-    model.add(Dense(1))
-
-    optimizer = Adam(learning_rate=0.0001)
-    model.compile(optimizer=optimizer, loss='mean_squared_error')
-
-    early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
-
-    history = model.fit(X_train, y_train, epochs=50, batch_size=32, validation_data=(X_test, y_test), verbose=1, callbacks=[early_stopping])
-
-    return model
-
-trained_model = train_model()  # Cached training
-
-# Model Evaluation
-loss = trained_model.evaluate(X_test, y_test)
-print(f"Model Loss: {loss}")
-
-predictions = trained_model.predict(X_test)
-
-# Visualization
-plt.figure(figsize=(10, 6))
-plt.scatter(y_test, predictions)
-plt.xlabel("Actual GDP (constant 2015 USD)")
-plt.ylabel("Predicted GDP (constant 2015 USD)")
-plt.title("Actual vs Predicted GDP")
-plt.show()
-
-plt.figure(figsize=(10, 6))
-plt.scatter(y_test, predictions)
-plt.xlabel("Actual GDP (constant 2015 USD)")
-plt.ylabel("Predicted GDP (constant 2015 USD)")
-plt.title("Actual vs Predicted GDP")
-plt.show()
-
-import streamlit as st
-import pandas as pd
-import plotly.express as px
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, MinMaxScaler
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout
-from tensorflow.keras.callbacks import EarlyStopping
-from tensorflow.keras.optimizers import Adam
-
-### 🔹 Caching Functions ###
+### 🚀 Load Population & GDP Datasets ###
 @st.cache_data
-def load_population_data():
-    pop_url = "https://raw.githubusercontent.com/cmtrimble/cmtrimble.github.io/main/Predictive_App/World_Population_Data.csv"
-    return pd.read_csv(pop_url, encoding='latin1')
-
-@st.cache_data
-def load_gdp_data():
+def load_data():
+    pop_url = "https://raw.githubusercontent.com/cmtrimble/cmtrimble.github.io/main/Predictive_App/population.csv"
     gdp_url = "https://raw.githubusercontent.com/cmtrimble/cmtrimble.github.io/main/Predictive_App/gdp-worldbank-constant-usd.csv"
-    return pd.read_csv(gdp_url, encoding='latin1')
 
-# Load cached datasets
-df_pop = load_population_data()
-df_gdp = load_gdp_data()
+    try:
+        df_pop = pd.read_csv(pop_url, encoding='latin1')
+        df_gdp = pd.read_csv(gdp_url, encoding='latin1')
+    except Exception as e:
+        st.error(f"Error loading dataset: {e}")
+        return None, None
 
-### 🔹 Data Preprocessing ###
-df_combined = pd.merge(df_pop, df_gdp, left_on='Country', right_on='Entity', how='left')
+    return df_pop, df_gdp
 
-# Handle missing & infinite values
-df_combined.replace([float("inf"), -float("inf")], pd.NA, inplace=True)
-df_combined.dropna(subset=['Population_2024', 'GDP (constant 2015 USD)'], inplace=True)
+### 🚀 Data Cleaning & Preprocessing ###
+def preprocess_data(df_pop, df_gdp):
+    df_pop.columns = df_pop.columns.str.strip().str.replace(' ', '_').str.replace('(', '').str.replace(')', '').str.replace('Â', '')
 
-# Normalize data
-scaler = MinMaxScaler()
-df_combined[['Population_2024', 'GDP (constant 2015 USD)']] = scaler.fit_transform(df_combined[['Population_2024', 'GDP (constant 2015 USD)']])
+    # Rename for consistency
+    df_pop.rename(columns={'Population_(historical)': 'Population_historical'}, inplace=True)
 
-### 🔹 ML Model Training with Cache Clearing ###
-st.cache_data.clear()  # **Ensure retraining before running new predictions**
+    # Filter by year
+    latest_year = df_pop['Year'].max()
+    df_pop_filtered = df_pop[df_pop['Year'] >= 1950].copy()
 
+    # Compute population growth trends
+    df_pop_filtered['Pop_Growth'] = df_pop_filtered.groupby('Entity')['Population_historical'].pct_change().fillna(0)
+
+    # Clean GDP data
+    df_gdp_latest = df_gdp[df_gdp['Year'] == df_gdp['Year'].max()].dropna(subset=['GDP (constant 2015 USD)'])
+    df_gdp_latest['GDP (constant 2015 USD)'] = pd.to_numeric(df_gdp_latest['GDP (constant 2015 USD)'], errors='coerce')
+
+    # Merge population and GDP data
+    df_combined = pd.merge(df_pop_filtered, df_gdp_latest, left_on=['Entity', 'Year'], right_on=['Entity', 'Year'], how='left')
+
+    # **Check for Missing or Infinite Values**
+    df_combined.dropna(subset=['Population_historical', 'Pop_Growth', 'GDP (constant 2015 USD)'], inplace=True)
+    df_combined.replace([np.inf, -np.inf], np.nan, inplace=True)
+    df_combined.dropna(inplace=True)
+
+    # Normalize Data
+    scaler = MinMaxScaler()
+    df_combined[['Population_historical', 'Pop_Growth', 'GDP (constant 2015 USD)']] = scaler.fit_transform(df_combined[['Population_historical', 'Pop_Growth', 'GDP (constant 2015 USD)']])
+
+    return df_combined
+
+### 🚀 Regression Analysis ###
+def run_regression(df_combined):
+    X = df_combined[['Population_historical', 'Pop_Growth']]
+    y = df_combined['GDP (constant 2015 USD)']
+    X = sm.add_constant(X)
+
+    model = sm.OLS(y, X).fit()
+    st.write(model.summary())
+
+    return X, y, model
+
+### 🚀 Neural Network Training ###
 @st.cache_data
-def train_model():
-    X = df_combined[['Population_2024']].values
-    y = df_combined['GDP (constant 2015 USD)'].values
-
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
+def train_model(X_train, y_train, X_test, y_test):
     model = Sequential([
-        Dense(128, input_dim=1, activation='relu'),
+        Input(shape=(2,)),  # ✅ Fixes TensorFlow `input_dim` warning
+        Dense(128, activation='relu'),
         Dropout(0.2),
         Dense(64, activation='relu'),
         Dropout(0.2),
@@ -204,77 +114,217 @@ def train_model():
 
     early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
 
-    history = model.fit(X_train, y_train, epochs=50, batch_size=32, validation_data=(X_test, y_test), verbose=0, callbacks=[early_stopping])
+    history = model.fit(X_train, y_train, epochs=50, batch_size=32, validation_data=(X_test, y_test), verbose=1, callbacks=[early_stopping])
 
-    predictions = model.predict(X_test)
-    
-    # **Save Predictions in Session State**
-    st.session_state["predictions"] = predictions
-    return predictions
+    return model
 
-# Retrieve predictions
-predictions = train_model()
+### 🚀 Streamlit Controls for Running Modules ###
+st.title("Modularized Debugging")
 
-### 🔹 Streamlit UI ###
-st.title("Country Statistics Dashboard")
+# Ensure data is loaded before preprocessing
+if st.sidebar.button("Load Data"):
+    df_pop, df_gdp = load_data()
 
-# Debugging Prints
-st.write("### Debugging Information")
-st.write(f"X_test shape: {df_combined[['Population_2024']].values.shape}")
-st.write("Sample X_test values:")
-st.write(df_combined[['Population_2024']].head())  # Show first few values
+    if df_pop is None or df_gdp is None:
+        st.error("🚨 Error: Population or GDP data failed to load.")
+    else:
+        st.session_state["df_pop"] = df_pop  # Store `df_pop` globally
+        st.session_state["df_gdp"] = df_gdp  # Store `df_gdp` globally
+        st.write("Data Loaded Successfully!")
 
-st.write(f"Raw Predictions: {predictions[:5] if predictions is not None else 'No predictions generated'}")
+# **Preprocess Data**
+if st.sidebar.button("Preprocess Data"):
+    if "df_pop" not in st.session_state or "df_gdp" not in st.session_state:
+        st.error("🚨 Error: Load data first before preprocessing.")
+    else:
+        df_combined = preprocess_data(st.session_state["df_pop"], st.session_state["df_gdp"])
 
-# Model Predictions Display
-if predictions is not None and len(predictions) > 0:
+        # Store the preprocessed data globally in session state
+        st.session_state["df_combined"] = df_combined
+
+        st.write("Data Preprocessed Successfully!")
+
+# **Run Regression**
+if st.sidebar.button("Run Regression"):
+    if "df_combined" not in st.session_state:
+        st.error("🚨 Error: Preprocess data first before running regression.")
+    else:
+        X, y, model = run_regression(st.session_state["df_combined"])
+
+# **Train Neural Network Model**
+if st.sidebar.button("Train Model"):
+    if "df_combined" not in st.session_state:
+        st.error("🚨 Error: Preprocess data first before training.")
+    else:
+        X_train, X_test, y_train, y_test = train_test_split(
+            st.session_state["df_combined"][['Population_historical', 'Pop_Growth']],
+            st.session_state["df_combined"]['GDP (constant 2015 USD)'],
+            test_size=0.2,
+            random_state=42
+        )
+
+        # Store split datasets in session state
+        st.session_state["X_train"], st.session_state["X_test"] = X_train, X_test
+        st.session_state["y_train"], st.session_state["y_test"] = y_train, y_test
+
+        trained_model = train_model(X_train, y_train, X_test, y_test)
+
+        st.session_state["trained_model"] = trained_model
+        st.write("Model Training Completed!")
+
+# **Run Predictions**
+if st.sidebar.button("Generate Predictions"):
+    if "trained_model" not in st.session_state or "X_test" not in st.session_state:
+        st.error("🚨 Error: Train the model first before generating predictions!")
+    else:
+        trained_model = st.session_state["trained_model"]
+        predictions = trained_model.predict(st.session_state["X_test"]).flatten().tolist()
+
+        # Store predictions globally for easy access
+        st.session_state["predictions"] = predictions[:10]
+
+        st.write("Predictions Generated!")
+
+# **Visualizations**
+if st.sidebar.button("Generate Predictions", key="generate_predictions"):
+    if "trained_model" not in st.session_state or "X_test" not in st.session_state or "y_test" not in st.session_state:
+        st.error("🚨 Error: Train the model first before generating predictions!")
+    else:
+        trained_model = st.session_state["trained_model"]
+        predictions = trained_model.predict(st.session_state["X_test"]).flatten().tolist()
+
+        st.session_state["predictions"] = predictions[:10]
+
+        # Retrieve y_test for visualization
+        y_test = st.session_state["y_test"]
+
+        # Generate scatter plot
+        fig, ax1 = plt.subplots()
+        ax1.scatter(y_test, predictions)
+        ax1.set_xlabel("Actual GDP")
+        ax1.set_ylabel("Predicted GDP")
+        ax1.set_title("Actual vs. Predicted GDP")
+
+        st.pyplot(fig)
+
+
+# Streamlit Integration
+import streamlit as st
+import plotly.express as px
+import pandas as pd
+import statsmodels.api as sm
+from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from sklearn.model_selection import train_test_split
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout
+from tensorflow.keras.callbacks import EarlyStopping
+from tensorflow.keras.optimizers import Adam
+import subprocess
+import spacy
+
+# Install models if they aren't already installed
+def ensure_spacy_models():
+    models = ["en_core_web_md", "en_core_web_sm"]
+
+    for model in models:
+        try:
+            spacy.load(model)  # ✅ Check if the model is already installed
+        except OSError:
+            print(f"🔧 {model} not found. Installing now...")
+            subprocess.run(["python", "-m", "spacy", "download", model])  # ✅ Install model
+            print(f"✅ {model} installed successfully!")
+
+# Run the model installation check before loading
+ensure_spacy_models()
+
+# Now load the models
+nlp_md = spacy.load("en_core_web_md")
+nlp_sm = spacy.load("en_core_web_sm")
+
+### 🚀 Caching Functions ###
+
+@st.cache_data
+def load_population_data():
+    pop_url = "https://raw.githubusercontent.com/cmtrimble/cmtrimble.github.io/main/Predictive_App/population.csv"
+    df = pd.read_csv(pop_url, encoding='latin1')
+
+    # Clean column names
+    df.columns = df.columns.str.strip().str.replace(' ', '_').str.replace('(', '').str.replace(')', '').str.replace('Â', '')
+
+    # **Fix: Correct Filtering**
+    df_filtered = df[df['Year'] >= 1950].copy()
+
+    # **Fix Column Name Consistency**
+    df_filtered.rename(columns={'Population_(historical)': 'Population_historical'}, inplace=True)
+
+    # **Compute Population Growth Trends Correctly**
+    df_filtered['Pop_Growth'] = df_filtered.groupby('Entity')['Population_historical'].pct_change().fillna(0)
+
+    return df_filtered
+
+@st.cache_data
+def load_gdp_data():
+    gdp_url = "https://raw.githubusercontent.com/cmtrimble/cmtrimble.github.io/main/Predictive_App/gdp-worldbank-constant-usd.csv"
+    return pd.read_csv(gdp_url, encoding='latin1')
+
+# Load cached datasets
+df_pop = load_population_data()
+df_gdp = load_gdp_data()
+
+### 🚀 **Data Preprocessing Fixes** ###
+df_gdp_latest = df_gdp[df_gdp['Year'] == df_gdp['Year'].max()].dropna(subset=['GDP (constant 2015 USD)'])
+df_gdp_latest['GDP (constant 2015 USD)'] = pd.to_numeric(df_gdp_latest['GDP (constant 2015 USD)'], errors='coerce')
+
+df_combined = pd.merge(df_pop, df_gdp_latest, left_on=['Entity', 'Year'], right_on=['Entity', 'Year'], how='left')
+
+df_combined.dropna(subset=['Population_historical', 'Pop_Growth', 'GDP (constant 2015 USD)'], inplace=True)
+
+scaler = MinMaxScaler()
+df_combined[['Population_historical', 'Pop_Growth', 'GDP (constant 2015 USD)']] = scaler.fit_transform(df_combined[['Population_historical', 'Pop_Growth', 'GDP (constant 2015 USD)']])
+
+### 🚀 **Fix: ML Model Training with Arguments**
+@st.cache_data
+def train_model(X_train, y_train, X_test, y_test):
+    model = Sequential([
+        Dense(128, input_dim=2, activation='relu'),
+        Dropout(0.2),
+        Dense(64, activation='relu'),
+        Dropout(0.2),
+        Dense(32, activation='relu'),
+        Dropout(0.2),
+        Dense(1)
+    ])
+
+    optimizer = Adam(learning_rate=0.0001)
+    model.compile(optimizer=optimizer, loss='mean_squared_error')
+
+    early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
+
+    history = model.fit(X_train, y_train, epochs=50, batch_size=32, validation_data=(X_test, y_test), verbose=1, callbacks=[early_stopping])
+
+    return model
+
+# ✅ **Ensure `X_train, X_test` is created before training**
+X = df_combined[['Population_historical', 'Pop_Growth']].values
+y = df_combined['GDP (constant 2015 USD)'].values
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# ✅ **Train the model with correct parameters**
+trained_model = train_model(X_train, y_train, X_test, y_test)
+
+# ✅ **Generate predictions safely**
+predictions = trained_model.predict(X_test).flatten().tolist()
+
+print("Raw Predictions:", predictions[:10])  # ✅ Debugging output
+
+# **Model Predictions**
+if predictions and len(predictions) > 0:
     st.write("### Model Predictions (GDP)")
     st.write(predictions)
 else:
-    st.write("⚠ No predictions were generated. Check model training.")
+    st.write("No predictions were generated. Check model training.")
 
-# Interactive Map
-selected_year = st.sidebar.selectbox("Select Year", df_gdp['Year'].unique())
-filtered_gdp_data = df_combined[df_combined['Year'] == selected_year]
-
-fig_map = px.choropleth(filtered_gdp_data, locations="Country", locationmode='country names',
-                        color="GDP (constant 2015 USD)",
-                        hover_name="Country",
-                        hover_data={"GDP (constant 2015 USD)": True, "Population_2024": True},
-                        projection="natural earth",
-                        title=f'World GDP in {selected_year}')
-st.plotly_chart(fig_map)
-
-# GDP Plot
-st.write(f"### GDP Plot ({selected_year})")
-fig_gdp = px.scatter(filtered_gdp_data, x="Country", y="GDP (constant 2015 USD)",
-                     color="GDP (constant 2015 USD)",
-                     hover_name="Country",
-                     hover_data={"GDP (constant 2015 USD)": True, "Population_2024": True, "Rank": True},
-                     title=f'GDP of Countries in {selected_year}')
-st.plotly_chart(fig_gdp)
-
-# Population Plot (for 2024)
-st.write("### Population Plot (2024)")
-fig_population = px.scatter(df_pop, x="Country", y="Population_2024",
-                            color="Population_2024",
-                            hover_name="Country",
-                            hover_data={"Population_2024": True},
-                            title='Population of Countries in 2024')
-st.plotly_chart(fig_population)
-
-print("Raw Predictions:", predictions)
-print(predictions.shape)
-print(f"X_test shape: {X_test.shape}")
-
-# Model Predictions
-if predictions.size > 0:
-    st.write("Model Predictions (GDP):")
-    st.write(predictions)
-else:
-    st.write("⚠ No predictions were generated. Check model training.")
-
-# Checkbox for raw data
+# **Checkbox for Raw Data**
 if st.checkbox('See Raw Data'):
     st.write("### Raw Data")
     st.write(filtered_gdp_data)
@@ -343,5 +393,4 @@ st.markdown("""
 - Population data: [World Population Data](https://www.kaggle.com/code/samithsachidanandan/countries-in-the-world-by-population-2025) 
 - GDP data: [World Bank and OECD (2025) – with minor processing by Our World in Data](https://ourworldindata.org/grapher/gdp-worldbank-constant-usd?form=MG0AV3) 
 """)
-
 
