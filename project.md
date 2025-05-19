@@ -13,6 +13,7 @@ permalink: /project/
 Explore various elements of GDP and Population using an interactive map. Gain insight into how populations impact Gross Domestic Product!
 
 [View Application](https://github.com/cmtrimble/cmtrimble.github.io/tree/main/Predictive_App)
+
 ---
 
 ## Project 1: Modern Seismology and Geophysics Analysis
