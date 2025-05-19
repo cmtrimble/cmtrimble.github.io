@@ -12,7 +12,7 @@ permalink: /predictive-app/
     <h2>Overview</h2>
     <ul>
       <li>Develops a predictive model to analyze the correlation between World GDP and population trends.</li>
-      <li>Interactive application that helps users analyze trends in population growth and its impact on economic output.</li>
+      <li>Interactive application that helps users analyze trends in population growth and its impact on economic output.        </ul>
 </div>
 
 <div class="project-detail-section">
