@@ -20,7 +20,7 @@ Explore various elements of GDP and Population using an interactive map. Gain in
 ### Overview
 Input features using the Jupyter Notebook environment and gain predictions for energy consumption usage over a user-inserted time period.
 
-[View Project 1](https://github.com/cmtrimble/cmtrimble.github.io/tree/main/EnergyPred)
+[View JN Application](https://github.com/cmtrimble/cmtrimble.github.io/tree/main/EnergyPred)
 
 ---
 
