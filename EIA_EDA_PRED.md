@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Energy Consumption Predictive Application
-permalink: /EIA_EDA&PRED/
+permalink: /EIA_EDA_PRED/
 ---
 
 # Predictive Application: U.S. Energy Consumption
