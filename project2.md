@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Project 2
-permalink: /Project2/
+permalink: /project2/
 ---
 
 # Project 2: Life Expectancy and Population Correlation
