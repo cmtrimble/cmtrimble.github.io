@@ -19,7 +19,7 @@ title: Caleb Trimble's Portfolio
         <li><a href="/project1/">Project 1: View Details</a></li>
         <li><a href="/project2/">Project 2: View Details</a></li>
         <li><a href="/project3/">Project 3: View Details</a></li>
-        <li><a href="/Tornado_Corr/">Project 4: View Details(/a></li>
+        <li><a href="/Tornado_Corr/">Project 4: View Details</a></li>
     </ul>
     <p><a href="/project/">Explore All Projects</a></p>
 </section>
