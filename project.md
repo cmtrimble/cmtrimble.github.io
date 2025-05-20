@@ -43,3 +43,13 @@ Explore patterns in earthquake occurrence, magnitude distribution, and data qual
 
 
 [View Project 3]()
+
+---
+
+## Project 4: Tornado Fatality and Injury Correlation
+### Overview
+Correlative analysis of several traits of tornadoes and their impact on property and people.
+
+[View Project 4]((https://github.com/cmtrimble/cmtrimble.github.io/tree/main/Tornadoes))
+
+---
