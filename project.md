@@ -32,10 +32,11 @@ Explore patterns in earthquake occurrence, magnitude distribution, and data qual
 
 ---
 
-## Project 2: Coming Soon!
+## Project 2: Life Expectancy and Population Correlation
+### Overview
+Explore correlations between populations, life expectancy, and death rates.
 
-
-[View Project 2]()
+[View Project 2](https://github.com/cmtrimble/cmtrimble.github.io/tree/main/Project2)
 
 ---
 
