@@ -15,7 +15,7 @@ title: Caleb Trimble's Portfolio
     <h2>Projects</h2>
     <ul>
         <li><a href="/predictive-app/">Streamlit Application: View Details</a></li>
-        <li><a href="/EIA_EDA_PRED.md/">Energy Consumption Prediction: View Details</a></li>
+        <li><a href="/EIA_EDA_PRED/">Energy Consumption Prediction: View Details</a></li>
         <li><a href="/project1/">Project 1: View Details</a></li>
         <li><a href="/project2/">Project 2: View Details</a></li>
         <li><a href="/project3/">Project 3: View Details</a></li>
