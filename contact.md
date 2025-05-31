@@ -26,5 +26,5 @@ permalink: /contact/
 </div>
 
 ## Personal Contact Information
-- **Email Address:** cmtrimble@my365.bellevue.edu
-- **Phone Number:** xxx-xxx-8221
+- **Email Address:** ctrimble.ds@gmail.com
+
