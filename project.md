@@ -40,10 +40,11 @@ Explore correlations between populations, life expectancy, and death rates.
 
 ---
 
-## Project 3: Coming Soon!
+## Project 3: US Gross Domestic Product Analysis
+### Overview
+Discover which industries to invest in based on their relation to GDP, stability, and volatility
 
-
-[View Project 3]()
+[View Project 3](https://github.com/cmtrimble/cmtrimble.github.io/tree/main/Project3)
 
 ---
 
