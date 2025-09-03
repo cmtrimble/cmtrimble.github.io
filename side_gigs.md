@@ -1,6 +1,6 @@
 ---
 layout: page
-title: Side Gigs
+title: Freelance Work
 permalink: /side_gigs/
 ---
 
