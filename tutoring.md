@@ -4,8 +4,9 @@ title: Tutoring
 permalink: /tutoring/
 ---
 
-<section class="project-detail-section">
 # 📚 Tutoring with Caleb Trimble
+
+---
 
 As a tutor with Varsity Tutors, I specialize in guiding students through both technical mastery and personal meaning-making. My approach blends symbolic systems, narrative framing, and practical troubleshooting — tailored to each learner’s unique logic.
 
@@ -21,6 +22,8 @@ As a tutor with Varsity Tutors, I specialize in guiding students through both te
 - Tableau
 - Technology and Coding
 - Writing
+
+---
 
 ## 🧠 Teaching Philosophy
 I believe in adaptive mentorship — meeting students where they are, and helping them build frameworks that make sense to them. Whether it’s decoding a regression model or unpacking a mythic archetype, I aim to foster curiosity, clarity, and confidence.
