@@ -4,6 +4,7 @@ title: Freelance Work
 permalink: /side_gigs/
 ---
 
+<section class="project-detail-section">
 # 🎙️ Side Gigs & Creative Work
 
 ## 🎙️ Voices: Aspiring Voice Actor
@@ -31,3 +32,5 @@ As an independent shopper and delivery driver with Shipt, I navigated the Omaha 
 
 **What I Learned:**
 Even in transactional roles, meaning-making matters. Shipt taught me how to find structure in chaos, and how to serve with both efficiency and care.
+
+</section>
