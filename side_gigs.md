@@ -4,11 +4,11 @@ title: Freelance Work
 permalink: /side_gigs/
 ---
 
-# 🎙️ Side Gigs & Creative Work
+#Side Gigs & Creative Work
 
 ---
 
-## 🎙️ Voices: Aspiring Voice Actor
+## Voices: Aspiring Voice Actor
 
 I'm an aspiring voice actor with experience in theater and screen performance, specializing in emotional resonance and accent versatility. My delivery style blends observer cognition with genre adaptability — from mythic narration to dystopian grit.
 
@@ -36,3 +36,4 @@ As an independent shopper and delivery driver with Shipt, I navigated the Omaha 
 **What I Learned:**
 Even in transactional roles, meaning-making matters. Shipt taught me how to find structure in chaos, and how to serve with both efficiency and care.
 
+---
