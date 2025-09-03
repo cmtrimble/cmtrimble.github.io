@@ -4,8 +4,9 @@ title: Freelance Work
 permalink: /side_gigs/
 ---
 
-<section class="project-detail-section">
 # 🎙️ Side Gigs & Creative Work
+
+---
 
 ## 🎙️ Voices: Aspiring Voice Actor
 
@@ -21,6 +22,8 @@ Voice is more than sound — it's story, emotion, and identity. I aim to bring c
 
 [🎧 Visit my Voices profile](https://www.voices.com/profile/calebtrimble)
 
+---
+
 ## Shipt: Logistics in Motion
 
 As an independent shopper and delivery driver with Shipt, I navigated the Omaha metro area to fulfill grocery orders with speed, empathy, and precision. This role became a live testbed for my observer cognition — blending symbolic logic, real-time decision-making, and human-centered service.
@@ -33,4 +36,3 @@ As an independent shopper and delivery driver with Shipt, I navigated the Omaha 
 **What I Learned:**
 Even in transactional roles, meaning-making matters. Shipt taught me how to find structure in chaos, and how to serve with both efficiency and care.
 
-</section>
