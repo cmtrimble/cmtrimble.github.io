@@ -10,7 +10,7 @@ navigation:
   - title: Projects
     url: /projects/
   - title: Freelance Work
-    url: /side-gigs/
+    url: /side_gigs/
   - title: Tutoring
     url: /tutoring/
   - title: Contact
