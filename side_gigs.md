@@ -4,7 +4,7 @@ title: Freelance Work
 permalink: /side_gigs/
 ---
 
-#Side Gigs & Creative Work
+# Side Gigs & Creative Work
 
 ---
 
