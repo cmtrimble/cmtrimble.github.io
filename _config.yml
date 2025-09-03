@@ -9,5 +9,10 @@ navigation:
     url: /#about
   - title: Projects
     url: /#project
+  - title: Freelance Work
+    url: /side_gigs/
+  - title: Tutoring
+    url: /tutoring/
   - title: Contact
     url: /#contact
+  
